@@ -1,0 +1,2 @@
+# DAL
+Decentralized Active Learning
