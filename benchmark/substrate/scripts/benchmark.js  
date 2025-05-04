@@ -1,0 +1,32 @@
+// scripts/benchmark.js
+
+const { ApiPromise, WsProvider, Keyring } = require('@polkadot/api');
+const { CodePromise } = require('@polkadot/api-contract');
+const fs = require('fs');
+
+async function main() {
+    const provider = new WsProvider('ws://127.0.0.1:9944');
+    const api = await ApiPromise.create({ provider });
+
+    const keyring = new Keyring({ type: 'sr25519' });
+    const alice = keyring.addFromUri('//Alice');
+
+    const metadata = JSON.parse(fs.readFileSync('./group_contract.json'));
+    const wasm = fs.readFileSync('./group_contract.wasm');
+
+    const code = new CodePromise(api, metadata, wasm);
+    const contract = await code.tx.new({ gasLimit: '1000000000000' }).signAndSend(alice);
+
+    console.log('Contract deployed:', contract.contract.address.toHuman());
+
+    const txStart = Date.now();
+    const result = await contract.contract.tx.addFile({ gasLimit: '1000000000000' }, '0xDEADBEEF')
+        .signAndSend(alice);
+    const txEnd = Date.now();
+
+    console.log(`Transaction latency: ${txEnd - txStart} ms`);
+
+    process.exit(0);
+}
+
+main().catch(console.error);

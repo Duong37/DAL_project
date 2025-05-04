@@ -1,0 +1,17 @@
+[package]
+name = "group_contract"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ink = "4.0.0"
+
+[lib]
+name = "group_contract"
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = ["std"]
+std = [
+    "ink/std",
+]
