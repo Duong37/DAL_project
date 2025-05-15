@@ -1,2 +1,2 @@
-# DAL
-Decentralized Active Learning
+# DAL Project
+Decentralized Active Learning Project
