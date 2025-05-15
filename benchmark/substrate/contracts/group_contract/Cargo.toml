@@ -4,10 +4,12 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-ink = "4.0.0"
+ink = { version = "5.0.2", default-features = false }
+
+[dev-dependencies]
+ink_e2e = { version = "5.0.2" }
 
 [lib]
-name = "group_contract"
 crate-type = ["cdylib", "rlib"]
 
 [features]
@@ -15,3 +17,5 @@ default = ["std"]
 std = [
     "ink/std",
 ]
+ink-as-dependency = []
+e2e-tests = []

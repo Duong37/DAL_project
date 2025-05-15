@@ -1,8 +1,10 @@
-// scripts/benchmark.js
-
 const { ApiPromise, WsProvider, Keyring } = require('@polkadot/api');
-const { CodePromise } = require('@polkadot/api-contract');
+const { CodePromise, ContractPromise } = require('@polkadot/api-contract');
 const fs = require('fs');
+
+const METADATA_PATH = './group_contract.json';
+const WASM_PATH = './group_contract.wasm';
+const NUM_CALLS = 20; // Number of transactions to send for both latency and throughput tests
 
 async function main() {
     const provider = new WsProvider('ws://127.0.0.1:9944');
@@ -11,22 +13,89 @@ async function main() {
     const keyring = new Keyring({ type: 'sr25519' });
     const alice = keyring.addFromUri('//Alice');
 
-    const metadata = JSON.parse(fs.readFileSync('./group_contract.json'));
-    const wasm = fs.readFileSync('./group_contract.wasm');
-
+    const metadata = JSON.parse(fs.readFileSync(METADATA_PATH, 'utf8'));
+    const wasm = fs.readFileSync(WASM_PATH);
     const code = new CodePromise(api, metadata, wasm);
-    const contract = await code.tx.new({ gasLimit: '1000000000000' }).signAndSend(alice);
 
-    console.log('Contract deployed:', contract.contract.address.toHuman());
+    console.log('Deploying contract...');
+    const deploymentStart = Date.now();
 
-    const txStart = Date.now();
-    const result = await contract.contract.tx.addFile({ gasLimit: '1000000000000' }, '0xDEADBEEF')
-        .signAndSend(alice);
-    const txEnd = Date.now();
+    const unsub = await code.tx
+        .new({ gasLimit: 100_000_000_000, storageDepositLimit: null })
+        .signAndSend(alice, async (result) => {
+            if (result.status.isInBlock || result.status.isFinalized) {
+                const deploymentEnd = Date.now();
+                console.log(`Deployment latency: ${deploymentEnd - deploymentStart} ms`);
 
-    console.log(`Transaction latency: ${txEnd - txStart} ms`);
+                const record = result.contract || result.events.find(e => e.event.method === 'Instantiated');
+                const address = record?.event?.data?.[1]?.toString();
+                if (!address) {
+                    console.error('Failed to extract contract address');
+                    unsub();
+                    return;
+                }
 
-    process.exit(0);
+                console.log(`Contract deployed at: ${address}`);
+                const contract = new ContractPromise(api, metadata, address);
+
+                // Latency test: sequential calls
+                console.log('\nRunning latency test...');
+                const latencies = [];
+
+                for (let i = 0; i < NUM_CALLS; i++) {
+                    const txStart = Date.now();
+                    await new Promise((resolve) => {
+                        contract.tx.addFile(
+                            { gasLimit: 100_000_000_000, storageDepositLimit: null },
+                            `0xDEAD000${i}`
+                        ).signAndSend(alice, (res) => {
+                            if (res.status.isInBlock || res.status.isFinalized) {
+                                const txEnd = Date.now();
+                                const latency = txEnd - txStart;
+                                latencies.push(latency);
+                                console.log(`Call ${i + 1} latency: ${latency} ms`);
+                                resolve();
+                            }
+                        });
+                    });
+                }
+
+                const avgLatency = latencies.reduce((a, b) => a + b, 0) / latencies.length;
+                console.log(`Average latency: ${avgLatency.toFixed(2)} ms`);
+
+                // Throughput test: parallel calls
+                console.log('\nRunning throughput test...');
+                const startThroughput = Date.now();
+                let completed = 0;
+
+                await Promise.all(
+                    Array.from({ length: NUM_CALLS }).map((_, i) =>
+                        new Promise((resolve) => {
+                            contract.tx.addFile(
+                                { gasLimit: 100_000_000_000, storageDepositLimit: null },
+                                `0xBEEF000${i}`
+                            ).signAndSend(alice, (res) => {
+                                if (res.status.isInBlock || res.status.isFinalized) {
+                                    completed++;
+                                    resolve();
+                                }
+                            });
+                        })
+                    )
+                );
+
+                const endThroughput = Date.now();
+                const durationSec = (endThroughput - startThroughput) / 1000;
+                const throughput = completed / durationSec;
+                console.log(`Throughput: ${throughput.toFixed(2)} tx/s over ${durationSec.toFixed(2)} seconds`);
+
+                unsub();
+                process.exit(0);
+            }
+        });
 }
 
-main().catch(console.error);
+main().catch((err) => {
+    console.error('Error:', err);
+    process.exit(1);
+});

@@ -9,13 +9,6 @@ What It Includes
 - Basic latency measurement (transaction roundtrip time)
 - Setup to expand into throughput testing with repeated calls
 
-🏗 Project Structure
-substrate-benchmarking/
-├── contracts/
-│ └── group_contract/ # The Ink! contract
-├── scripts/
-│ └── benchmark.js # Script to test and measure performance
-
 Setup Instructions
 
 1. Install Prerequisites
