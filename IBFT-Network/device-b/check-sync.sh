@@ -1,5 +1,55 @@
 #!/bin/bash
 
+# Function to get current block number
+get_block_number() {
+    curl -s -X POST -H "Content-Type: application/json" \
+        --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' \
+        http://localhost:8550 | \
+    grep -o '"result":"[^"]*"' | \
+    cut -d'"' -f4 | \
+    xargs printf "%d\n" 2>/dev/null
+}
+
+# Function to get sync status
+get_sync_status() {
+    curl -s -X POST -H "Content-Type: application/json" \
+        --data '{"jsonrpc":"2.0","method":"eth_syncing","params":[],"id":1}' \
+        http://localhost:8550
+}
+
+echo "Checking Device B synchronization status..."
+echo "----------------------------------------"
+
+# Check if node is accessible
+if ! curl -s -X POST -H "Content-Type: application/json" \
+    --data '{"jsonrpc":"2.0","method":"net_version","params":[],"id":1}' \
+    http://localhost:8550 > /dev/null; then
+    echo "❌ Error: Cannot connect to Device B node. Make sure it's running."
+    exit 1
+fi
+
+# Get current block number
+BLOCK_NUM=$(get_block_number)
+SYNC_STATUS=$(get_sync_status)
+
+if [[ $SYNC_STATUS == *"false"* ]]; then
+    echo "✅ Node is synchronized"
+    echo "Current block number: $BLOCK_NUM"
+else
+    echo "🔄 Node is still synchronizing"
+    echo "Current block number: $BLOCK_NUM"
+fi
+
+# Check peer count
+PEER_COUNT=$(curl -s -X POST -H "Content-Type: application/json" \
+    --data '{"jsonrpc":"2.0","method":"net_peerCount","params":[],"id":1}' \
+    http://localhost:8550 | \
+    grep -o '"result":"[^"]*"' | \
+    cut -d'"' -f4 | \
+    xargs printf "%d\n" 2>/dev/null)
+
+echo "Connected peers: $PEER_COUNT"
+
 echo "🔍 Checking Device B Node Synchronization..."
 echo "============================================="
 

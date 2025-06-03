@@ -19,13 +19,19 @@ if [ ! -f "genesis.json" ]; then
     exit 1
 fi
 
-# Clean up any existing container
-echo "🧹 Cleaning up existing Device B container..."
-docker-compose down 2>/dev/null || true
+# Create data directory if it doesn't exist
+mkdir -p data
 
-# Start the Device B node
-echo "🔄 Starting Device B node..."
-docker-compose up -d
+# Stop any existing containers
+docker compose down -v
+
+# Start the node
+docker compose up -d
+
+# Wait for node to start
+sleep 5
+
+echo "Device B node started. Use check-sync.sh to monitor synchronization."
 
 if [ $? -eq 0 ]; then
     echo ""

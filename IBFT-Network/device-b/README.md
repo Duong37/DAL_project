@@ -1,6 +1,44 @@
-# Device B - Additional Besu Node
+# Device B - IBFT Network Node
 
-This setup creates an additional Besu node that connects to the main IBFT network as a non-validator participant. This node will sync with the 4-validator IBFT network and can be used for additional capacity, testing, or as a read-only node.
+This directory contains the configuration and scripts for running a Besu node that connects to the main IBFT network.
+
+## Configuration
+
+- JSON-RPC Port: 8550
+- P2P Port: 30310
+- Bootnode: 145.109.26.51:30303
+
+## Prerequisites
+
+- Docker and Docker Compose installed
+- Access to the main network's bootnode
+- Genesis file from the main network (located in parent directory)
+
+## Usage
+
+1. Start the node:
+   ```bash
+   ./start-device-b.sh
+   ```
+
+2. Monitor synchronization:
+   ```bash
+   ./check-sync.sh
+   ```
+
+## Files
+
+- `docker-compose.yml`: Container configuration
+- `start-device-b.sh`: Node startup script
+- `check-sync.sh`: Synchronization monitoring script
+
+## Troubleshooting
+
+If the node fails to connect:
+1. Ensure the bootnode address is correct
+2. Check if ports 8550 and 30310 are accessible
+3. Verify that the genesis file is properly mounted
+4. Check network connectivity to the bootnode
 
 ## 📁 Directory Structure
 
