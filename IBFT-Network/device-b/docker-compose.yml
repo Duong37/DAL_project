@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  device-b-node:
+    image: hyperledger/besu:latest
+    container_name: device-b-node
+    ports:
+      - "8550:8550"      # JSON-RPC port
+      - "30310:30310"    # P2P port
+    volumes:
+      - ./node-data:/opt/besu/data
+      - ./genesis.json:/opt/besu/genesis.json
+    command: >
+      --data-path=/opt/besu/data
+      --genesis-file=/opt/besu/genesis.json
+      --bootnodes=enode://b3966c680028e5804d8faa6684bd308c179118be97e9a6970e30b55cc67d0720d6c1b68bbc2cbac80d75b05f63ebd14c22398feb824be672ec03911d876b3d4d@172.16.239.11:30303
+      --p2p-port=30310
+      --p2p-host=0.0.0.0
+      --rpc-http-enabled
+      --rpc-http-host=0.0.0.0
+      --rpc-http-port=8550
+      --rpc-http-api=ETH,NET,IBFT
+      --host-allowlist="*"
+      --rpc-http-cors-origins="all"
+      --profile=ENTERPRISE
+      --sync-mode=FULL
+    networks:
+      - besu-network
+
+networks:
+  besu-network:
+    external: true
+    name: ibft-network_besu-network
