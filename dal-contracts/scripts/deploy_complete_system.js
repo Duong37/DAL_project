@@ -3,7 +3,7 @@ const fs = require("fs");
 const path = require("path");
 
 async function main() {
-    console.log("🚀 Deploying Complete DAL System...");
+    console.log("Deploying Complete DAL System...");
     
     // Get the deployer account
     const [deployer] = await hre.ethers.getSigners();
@@ -20,12 +20,12 @@ async function main() {
     };
     
     // Deploy UserProfileFactory
-    console.log("\n📋 Deploying UserProfileFactory...");
+    console.log("\nDeploying UserProfileFactory...");
     const UserProfileFactory = await hre.ethers.getContractFactory("UserProfileFactory");
     const userProfileFactory = await UserProfileFactory.deploy();
     await userProfileFactory.deployed();
     
-    console.log("✅ UserProfileFactory deployed to:", userProfileFactory.address);
+    console.log("UserProfileFactory deployed to:", userProfileFactory.address);
     console.log("Transaction hash:", userProfileFactory.deployTransaction.hash);
     
     deploymentInfo.contracts.UserProfileFactory = {
@@ -35,12 +35,12 @@ async function main() {
     };
     
     // Deploy ReputationSystem
-    console.log("\n⭐ Deploying ReputationSystem...");
+    console.log("\nDeploying ReputationSystem...");
     const ReputationSystem = await hre.ethers.getContractFactory("ReputationSystem");
     const reputationSystem = await ReputationSystem.deploy(userProfileFactory.address);
     await reputationSystem.deployed();
     
-    console.log("✅ ReputationSystem deployed to:", reputationSystem.address);
+    console.log("ReputationSystem deployed to:", reputationSystem.address);
     console.log("Transaction hash:", reputationSystem.deployTransaction.hash);
     
     deploymentInfo.contracts.ReputationSystem = {
@@ -50,7 +50,7 @@ async function main() {
     };
     
     // Deploy DALStorage (if not already deployed)
-    console.log("\n💾 Checking DALStorage deployment...");
+    console.log("\nChecking DALStorage deployment...");
     let dalStorageAddress;
     try {
         const existingDeployment = fs.readFileSync(
@@ -59,20 +59,20 @@ async function main() {
         );
         const existing = JSON.parse(existingDeployment);
         dalStorageAddress = existing.contracts.DALStorage.address;
-        console.log("📌 Using existing DALStorage at:", dalStorageAddress);
+        console.log("Using existing DALStorage at:", dalStorageAddress);
         
         deploymentInfo.contracts.DALStorage = {
             address: dalStorageAddress,
             note: "Using existing deployment"
         };
     } catch (error) {
-        console.log("🔧 Deploying new DALStorage...");
+        console.log("Deploying new DALStorage...");
         const DALStorage = await hre.ethers.getContractFactory("DALStorage");
         const dalStorage = await DALStorage.deploy();
         await dalStorage.deployed();
         
         dalStorageAddress = dalStorage.address;
-        console.log("✅ DALStorage deployed to:", dalStorageAddress);
+        console.log("DALStorage deployed to:", dalStorageAddress);
         
         deploymentInfo.contracts.DALStorage = {
             address: dalStorageAddress,
@@ -82,7 +82,7 @@ async function main() {
     }
     
     // Wait for confirmations
-    console.log("\n⏳ Waiting for confirmations...");
+    console.log("\nWaiting for confirmations...");
     await userProfileFactory.deployTransaction.wait(2);
     await reputationSystem.deployTransaction.wait(2);
     
@@ -96,7 +96,7 @@ async function main() {
     )).gasUsed.toString();
     
     // Test the system
-    console.log("\n🧪 Testing system integration...");
+    console.log("\nTesting system integration...");
     
     // Test user registration
     const testUsername = "dal_user_" + Date.now();
@@ -109,7 +109,7 @@ async function main() {
     );
     await registerTx.wait();
     
-    console.log("✅ User registered successfully!");
+    console.log("User registered successfully!");
     
     // Get user profile data
     const profileData = await userProfileFactory.getUserProfileData(deployer.address);
@@ -124,7 +124,7 @@ async function main() {
     const initRepTx = await reputationSystem.initializeUserReputation(deployer.address);
     await initRepTx.wait();
     
-    console.log("✅ Reputation initialized successfully!");
+    console.log("Reputation initialized successfully!");
     
     // Get reputation data
     const reputationData = await reputationSystem.getUserReputation(deployer.address);
@@ -172,20 +172,20 @@ async function main() {
             dalStorage: deploymentInfo.contracts.DALStorage.address
         },
         testResults: {
-            userRegistration: "✅ SUCCESS",
-            reputationInitialization: "✅ SUCCESS",
-            reputationUpdate: "✅ SUCCESS"
+            userRegistration: "SUCCESS",
+            reputationInitialization: "SUCCESS",
+            reputationUpdate: "SUCCESS"
         }
     };
     
     const summaryFile = path.join(deploymentsDir, `dal_system_summary_${hre.network.name}.json`);
     fs.writeFileSync(summaryFile, JSON.stringify(summary, null, 2));
     
-    console.log("\n📄 Deployment info saved to:", deploymentFile);
-    console.log("📄 Summary saved to:", summaryFile);
+    console.log("\nDeployment info saved to:", deploymentFile);
+    console.log("Summary saved to:", summaryFile);
     
-    console.log("\n🎉 Complete DAL System deployment completed!");
-    console.log("📋 Contract Summary:");
+    console.log("\nComplete DAL System deployment completed!");
+    console.log("Contract Summary:");
     console.log("┌─────────────────────────┬──────────────────────────────────────────────┐");
     console.log("│ Contract                │ Address                                      │");
     console.log("├─────────────────────────┼──────────────────────────────────────────────┤");
@@ -194,13 +194,13 @@ async function main() {
     console.log(`│ DALStorage              │ ${deploymentInfo.contracts.DALStorage.address} │`);
     console.log("└─────────────────────────┴──────────────────────────────────────────────┘");
     
-    console.log("\n🔗 Integration Notes:");
+    console.log("\nIntegration Notes:");
     console.log("- ReputationSystem is linked to UserProfileFactory");
     console.log("- All contracts deployed on network:", hre.network.name);
     console.log("- Chain ID:", deploymentInfo.chainId);
     console.log("- Total gas used:", Object.values(deploymentInfo.gasUsed).reduce((a, b) => parseInt(a) + parseInt(b), 0));
     
-    console.log("\n🚀 Next Steps:");
+    console.log("\nNext Steps:");
     console.log("1. Update your backend service with new contract addresses");
     console.log("2. Test user registration from frontend with MetaMask");
     console.log("3. Implement AL task workflows with reputation updates");

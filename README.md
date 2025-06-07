@@ -2,7 +2,7 @@
 
 A modular microservices-based Active Learning system with blockchain integration for decentralized model training and consensus.
 
-## 🏗️ Architecture
+## Architecture
 
 The DAL system is built using a 3-service microservices architecture:
 
@@ -30,7 +30,7 @@ The DAL system is built using a 3-service microservices architecture:
   - Service coordination and health monitoring
   - Cross-service communication
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Python 3.8+
@@ -100,7 +100,7 @@ curl http://localhost:8000/system/status
 python test_microservices_workflow.py
 ```
 
-## 📖 API Documentation
+## API Documentation
 
 Once the services are running, you can access the interactive API documentation:
 
@@ -108,7 +108,7 @@ Once the services are running, you can access the interactive API documentation:
 - **AL Engine**: http://localhost:8001/docs  
 - **Blockchain Service**: http://localhost:8002/docs
 
-## 🧪 Example Workflow
+## Example Workflow
 
 ### 1. Initialize an Experiment
 ```bash
@@ -147,7 +147,7 @@ curl -X POST http://localhost:8000/experiments/my_experiment/submit-label \
 curl http://localhost:8000/experiments/my_experiment/metrics
 ```
 
-## 🔧 Configuration
+## Configuration
 
 ### AL Engine Plugins
 
@@ -166,9 +166,9 @@ Currently implemented:
 - **Query Strategies**: Uncertainty Sampling, Random Sampling
 - **Datasets**: Wine, Iris, Synthetic
 
-## 🏛️ System Features
+## System Features
 
-### ✅ Implemented Features
+### Implemented Features
 
 - **Microservices Architecture**: Clean separation of concerns
 - **Plugin System**: Extensible AL components
@@ -180,7 +180,7 @@ Currently implemented:
 - **Error Handling**: Robust error management
 - **Documentation**: OpenAPI/Swagger docs
 
-### 🔄 Active Learning Workflow
+### Active Learning Workflow
 
 1. **Initialization**: Load dataset, configure model and strategy
 2. **Query**: Select most informative unlabeled samples
@@ -189,35 +189,35 @@ Currently implemented:
 5. **Evaluate**: Track performance metrics
 6. **Repeat**: Continue until stopping criteria met
 
-### 🔗 Blockchain Features
+### Blockchain Features
 
 - **Transaction Storage**: All model updates recorded
 - **Consensus Mechanism**: Voting on model updates
 - **Immutable History**: Complete audit trail
 - **Chain Validation**: Integrity verification
 
-## 🔗 JupyterLab Extension Integration
+## JupyterLab Extension Integration
 
-### ✅ **Modern API Integration**
+### Modern API Integration
 
 The JupyterLab extension has been **updated to use the modern microservices API** for optimal performance and maintainability. The extension now uses clean, RESTful endpoints that align with the microservices architecture.
 
-### **Modern API Endpoints Used:**
+### Modern API Endpoints Used:
 
 The JupyterLab extension now uses the modern `/experiments/*` and `/system/*` endpoints:
 
-- ✅ `POST /experiments/initialize` - Initialize new AL experiments
-- ✅ `GET /experiments/{id}/status` - Get experiment status and metrics
-- ✅ `GET /experiments/{id}/next-sample` - Get next sample for labeling
-- ✅ `POST /experiments/{id}/submit-label` - Submit labels and update model
-- ✅ `GET /experiments/{id}/metrics` - Get performance metrics
-- ✅ `GET /experiments/{id}/model-updates` - Get model update history
-- ✅ `GET /system/status` - Get overall system status
-- ✅ `POST /system/reset` - Reset the entire system
-- ✅ `GET /blockchain/status` - Get blockchain status
-- ✅ `GET /blockchain/blocks` - Get recent blockchain blocks
+- `POST /experiments/initialize` - Initialize new AL experiments
+- `GET /experiments/{id}/status` - Get experiment status and metrics
+- `GET /experiments/{id}/next-sample` - Get next sample for labeling
+- `POST /experiments/{id}/submit-label` - Submit labels and update model
+- `GET /experiments/{id}/metrics` - Get performance metrics
+- `GET /experiments/{id}/model-updates` - Get model update history
+- `GET /system/status` - Get overall system status
+- `POST /system/reset` - Reset the entire system
+- `GET /blockchain/status` - Get blockchain status
+- `GET /blockchain/blocks` - Get recent blockchain blocks
 
-### **Using the Updated JupyterLab Extension:**
+### Using the Updated JupyterLab Extension:
 
 1. **Start the microservices:**
    ```bash
@@ -242,24 +242,14 @@ The JupyterLab extension now uses the modern `/experiments/*` and `/system/*` en
    python test_modern_api_workflow.py
    ```
 
-### **Key Improvements:**
+### Key Improvements:
 
 - **Clean Architecture**: No legacy compatibility layer - pure microservices API
 - **Better Performance**: Direct communication with optimized endpoints
 - **Enhanced Features**: Access to full experiment lifecycle management
 - **Future-Proof**: Built on modern, extensible API design
-- **Type Safety**: Improved TypeScript integration with clear API contracts
 
-### **API Client Architecture:**
-
-The extension now uses a modern `DALAPIClient` class that:
-- Manages experiment state automatically
-- Provides type-safe API calls
-- Handles error cases gracefully
-- Supports the full microservices feature set
-- Maintains clean separation of concerns
-
-## 🧩 Extending the System
+## Extending the System
 
 ### Adding New AL Frameworks
 
@@ -279,7 +269,7 @@ The extension now uses a modern `DALAPIClient` class that:
 2. Implement the `QueryStrategyPlugin` interface
 3. Define strategy parameters
 
-## 🔍 Monitoring and Debugging
+## Monitoring and Debugging
 
 ### Health Checks
 ```bash
@@ -301,7 +291,7 @@ Each service provides detailed logging for debugging and monitoring.
 - Request/response times
 - Error rates
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
@@ -309,11 +299,11 @@ Each service provides detailed logging for debugging and monitoring.
 4. Add tests
 5. Submit a pull request
 
-## 📄 License
+## License
 
 [Add your license information here]
 
-## 🆘 Support
+## Support
 
 For issues and questions:
 1. Check the API documentation
