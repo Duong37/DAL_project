@@ -1,0 +1,12 @@
+include README.md
+include LICENSE
+include pyproject.toml
+include package.json
+include install.json
+include tsconfig.json
+recursive-include dal_jupyterlab_extension/labextension *.js *.js.map *.json *.woff2 *.woff *.ttf *.svg *.eot *.css
+prune **/node_modules
+prune lib
+global-exclude __pycache__
+global-exclude .DS_Store
+global-exclude .git* 

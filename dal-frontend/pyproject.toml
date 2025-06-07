@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "jupyterlab>=3.0.0,<4"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dal_jupyterlab_extension"
+version = "0.1.0"
+description = "A JupyterLab extension for Decentralized Active Learning"
+readme = "README.md"
+license = {file = "LICENSE"}
+requires-python = ">=3.7"
+dependencies = [
+    "jupyterlab>=3.0.0,<4",
+]
+
+[project.optional-dependencies]
+dev = [
+    "jupyterlab>=3.0.0,<4",
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/DAL_project"
+Repository = "https://github.com/yourusername/DAL_project.git"
+
+[tool.setuptools]
+zip-safe = false
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["dal_jupyterlab_extension*"]
+
+[tool.setuptools.package-data]
+"*" = ["*"] 

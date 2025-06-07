@@ -1,0 +1,30 @@
+{
+  "name": "dal-contracts",
+  "version": "1.0.0",
+  "description": "Smart contracts for the Decentralized Active Learning (DAL) framework",
+  "main": "index.js",
+  "scripts": {
+    "compile": "hardhat compile",
+    "deploy": "hardhat run scripts/deploy.js --network besu",
+    "deploy-local": "hardhat run scripts/deploy.js --network hardhat",
+    "test": "hardhat test",
+    "test-besu": "hardhat test --network besu",
+    "verify": "hardhat run scripts/verify.js --network besu",
+    "clean": "hardhat clean",
+    "node": "hardhat node",
+    "console": "hardhat console --network besu"
+  },
+  "keywords": ["blockchain", "smart-contracts", "active-learning", "besu", "ibft"],
+  "author": "DAL Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.2.3",
+    "@nomiclabs/hardhat-waffle": "^2.0.6",
+    "@openzeppelin/contracts": "^4.9.0",
+    "chai": "^4.3.8",
+    "ethereum-waffle": "^4.0.10",
+    "ethers": "^5.7.2",
+    "hardhat": "^2.17.0"
+  },
+  "dependencies": {}
+}

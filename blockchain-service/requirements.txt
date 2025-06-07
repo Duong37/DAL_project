@@ -1,0 +1,18 @@
+fastapi
+uvicorn[standard]
+pydantic
+
+# Blockchain connectivity
+web3
+eth-account
+
+# Cryptography for blockchain operations
+cryptography
+
+# Development and testing
+pytest
+pytest-asyncio
+httpx
+
+# Logging
+python-json-logger 

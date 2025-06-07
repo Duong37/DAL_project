@@ -1,211 +1,326 @@
-# Decentralized Active Learning (DAL) Framework
+# DAL (Decentralized Active Learning) System
 
-A framework for implementing decentralized active learning systems with blockchain integration.
+A modular microservices-based Active Learning system with blockchain integration for decentralized model training and consensus.
 
-## 🎯 Overview
+## 🏗️ Architecture
 
-DAL is a full-stack framework that combines:
-- Active Learning for efficient data labeling
-- Blockchain for decentralized coordination
-- FastAPI backend for robust API services
-- React frontend for interactive labeling
+The DAL system is built using a 3-service microservices architecture:
 
-### Key Features
+### 1. **AL Engine Service** (Port 8001)
+- **Purpose**: Core Active Learning logic with pluggable architecture
+- **Features**: 
+  - Multiple AL framework support (modAL, ALiPy, custom implementations)
+  - Plugin system for models, query strategies, and datasets
+  - Configuration-driven component selection
+  - Performance tracking and metrics
 
-1. **Active Learning Engine**
-   - Integration with modAL library
-   - Support for custom query strategies
-   - Performance tracking and metrics
-   - Model versioning
+### 2. **Blockchain Service** (Port 8002)
+- **Purpose**: Decentralized consensus and immutable record keeping
+- **Features**:
+  - Transaction storage and retrieval
+  - Voting mechanisms
+  - Model update history
+  - Chain validation
 
-2. **Blockchain Integration**
-   - Model state versioning
-   - Decentralized consensus
-   - Transaction tracking
-   - Data integrity verification
+### 3. **DAL Orchestrator Service** (Port 8000)
+- **Purpose**: API gateway and experiment coordination
+- **Features**:
+  - Unified API for frontend applications
+  - Experiment lifecycle management
+  - Service coordination and health monitoring
+  - Cross-service communication
 
-3. **FastAPI Backend**
-   - RESTful API endpoints
-   - Async support
-   - OpenAPI documentation
-   - Type safety with Pydantic
-
-4. **React Frontend**
-   - Modern Material-UI interface
-   - Real-time updates
-   - Interactive labeling
-   - Progress monitoring
-
-## 🚀 Getting Started
+## 🚀 Quick Start
 
 ### Prerequisites
-
 - Python 3.8+
-- Node.js 14+
-- pip and npm
+- pip
+- Virtual environment (recommended)
 
 ### Installation
 
-1. Clone the repository:
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd DAL_project
+   ```
+
+2. **Set up virtual environment**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. **Install dependencies for each service**
+   ```bash
+   # AL Engine
+   cd al-engine
+   pip install -r requirements.txt
+   cd ..
+   
+   # Blockchain Service
+   cd blockchain-service
+   pip install -r requirements.txt
+   cd ..
+   
+   # DAL Orchestrator
+   cd dal-server
+   pip install -r requirements.txt
+   cd ..
+   ```
+
+### Running the System
+
+#### Option 1: Use the startup script (Recommended)
 ```bash
-git clone https://github.com/yourusername/DAL_project.git
-cd DAL_project
+python start_microservices.py
 ```
 
-2. Install backend dependencies:
+#### Option 2: Start services manually
 ```bash
-pip install -r requirements.txt
+# Terminal 1 - AL Engine
+cd al-engine
+python main.py
+
+# Terminal 2 - Blockchain Service
+cd blockchain-service
+python main.py
+
+# Terminal 3 - DAL Orchestrator
+cd dal-server
+python main.py
 ```
 
-3. Install frontend dependencies:
+### Verify Installation
 ```bash
-cd DAL/frontend
-npm install
+# Check system status
+curl http://localhost:8000/system/status
+
+# Run the workflow test
+python test_microservices_workflow.py
 ```
 
-### Running the Application
+## 📖 API Documentation
 
-1. Start the backend server:
+Once the services are running, you can access the interactive API documentation:
+
+- **DAL Orchestrator**: http://localhost:8000/docs
+- **AL Engine**: http://localhost:8001/docs  
+- **Blockchain Service**: http://localhost:8002/docs
+
+## 🧪 Example Workflow
+
+### 1. Initialize an Experiment
 ```bash
-uvicorn DAL.backend.main:app --reload
+curl -X POST http://localhost:8000/experiments/initialize \
+  -H "Content-Type: application/json" \
+  -d '{
+    "experiment_id": "my_experiment",
+    "al_framework": {"type": "sklearn"},
+    "model": {
+      "type": "random_forest",
+      "parameters": {"n_estimators": 50, "random_state": 42}
+    },
+    "query_strategy": {"type": "uncertainty_sampling"},
+    "dataset": {"type": "wine", "synthetic_samples": 50}
+  }'
 ```
 
-2. Start the frontend development server:
+### 2. Get Next Sample for Labeling
 ```bash
-cd DAL/frontend
-npm start
+curl http://localhost:8000/experiments/my_experiment/next-sample
 ```
 
-3. Run the example script:
+### 3. Submit a Label
 ```bash
-python examples/run_prototype.py
+curl -X POST http://localhost:8000/experiments/my_experiment/submit-label \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sample_id": "sample_22",
+    "label": 2,
+    "confidence": 0.9
+  }'
 ```
 
-## 📁 Project Structure
-
-```
-DAL/                              # Full-stack framework
-├── backend/                      # FastAPI backend
-│   ├── __init__.py              # Package initialization
-│   ├── main.py                  # FastAPI application
-│   ├── al_manager.py            # Active Learning logic
-│   ├── blockchain_adapter.py     # Blockchain integration
-│   ├── data_manager.py          # Data management
-│   ├── routes/                  # API endpoints
-│   │   └── al_routes.py
-│   ├── utils.py                 # Utility functions
-│   └── schemas.py               # Pydantic models
-│
-├── frontend/                     # React frontend
-│   ├── public/
-│   ├── src/
-│   └── package.json
-│
-└── __init__.py
-
-models/                          # Model definitions
-└── base_model.py                # Base model class
-
-examples/                        # Example scripts
-└── run_prototype.py             # Demo script
-
-data/                           # Demo datasets
-└── dataset.csv
+### 4. Get Experiment Metrics
+```bash
+curl http://localhost:8000/experiments/my_experiment/metrics
 ```
 
 ## 🔧 Configuration
 
-### Backend Configuration
+### AL Engine Plugins
 
-The backend can be configured through environment variables or a config file:
+The AL Engine supports a plugin architecture for extensibility:
 
-```python
-# config.py
-SETTINGS = {
-    'MODEL_PATH': 'models/',
-    'DATA_PATH': 'data/',
-    'BATCH_SIZE': 5,
-    'MAX_ITERATIONS': 100
-}
-```
+- **Frameworks**: `al-engine/plugins/frameworks/`
+- **Models**: `al-engine/plugins/models/`
+- **Query Strategies**: `al-engine/plugins/strategies/`
+- **Datasets**: `al-engine/plugins/datasets/`
 
-### Frontend Configuration
+### Available Plugins
 
-Frontend settings can be modified in `.env`:
+Currently implemented:
+- **Framework**: Scikit-learn (with optional modAL integration)
+- **Models**: Random Forest, SVM, Logistic Regression
+- **Query Strategies**: Uncertainty Sampling, Random Sampling
+- **Datasets**: Wine, Iris, Synthetic
 
-```env
-REACT_APP_API_URL=http://localhost:8000
-REACT_APP_BATCH_SIZE=5
-```
+## 🏛️ System Features
 
-## 🔌 API Endpoints
+### ✅ Implemented Features
 
-### Active Learning Endpoints
+- **Microservices Architecture**: Clean separation of concerns
+- **Plugin System**: Extensible AL components
+- **Blockchain Integration**: Immutable experiment records
+- **Health Monitoring**: Service status and metrics
+- **API Gateway**: Unified interface for clients
+- **Experiment Management**: Full lifecycle support
+- **Performance Tracking**: Comprehensive metrics
+- **Error Handling**: Robust error management
+- **Documentation**: OpenAPI/Swagger docs
 
-- `POST /api/v1/al/initialize`
-  - Initialize the active learning model
-  - Requires initial labeled dataset
+### 🔄 Active Learning Workflow
 
-- `POST /api/v1/al/query`
-  - Query for most informative samples
-  - Returns indices and uncertainty scores
+1. **Initialization**: Load dataset, configure model and strategy
+2. **Query**: Select most informative unlabeled samples
+3. **Label**: Human annotator provides labels
+4. **Update**: Retrain model with new labeled data
+5. **Evaluate**: Track performance metrics
+6. **Repeat**: Continue until stopping criteria met
 
-- `POST /api/v1/al/update`
-  - Update model with new labels
-  - Returns performance metrics
+### 🔗 Blockchain Features
 
-- `GET /api/v1/al/status`
-  - Get current system status
-  - Returns training progress and metrics
+- **Transaction Storage**: All model updates recorded
+- **Consensus Mechanism**: Voting on model updates
+- **Immutable History**: Complete audit trail
+- **Chain Validation**: Integrity verification
 
-## 💻 Development
+## 🔗 JupyterLab Extension Integration
 
-### Adding New Features
+### ✅ **Modern API Integration**
 
-1. Create a new branch:
+The JupyterLab extension has been **updated to use the modern microservices API** for optimal performance and maintainability. The extension now uses clean, RESTful endpoints that align with the microservices architecture.
+
+### **Modern API Endpoints Used:**
+
+The JupyterLab extension now uses the modern `/experiments/*` and `/system/*` endpoints:
+
+- ✅ `POST /experiments/initialize` - Initialize new AL experiments
+- ✅ `GET /experiments/{id}/status` - Get experiment status and metrics
+- ✅ `GET /experiments/{id}/next-sample` - Get next sample for labeling
+- ✅ `POST /experiments/{id}/submit-label` - Submit labels and update model
+- ✅ `GET /experiments/{id}/metrics` - Get performance metrics
+- ✅ `GET /experiments/{id}/model-updates` - Get model update history
+- ✅ `GET /system/status` - Get overall system status
+- ✅ `POST /system/reset` - Reset the entire system
+- ✅ `GET /blockchain/status` - Get blockchain status
+- ✅ `GET /blockchain/blocks` - Get recent blockchain blocks
+
+### **Using the Updated JupyterLab Extension:**
+
+1. **Start the microservices:**
+   ```bash
+   python start_microservices.py
+   ```
+
+2. **Build and install the updated extension:**
+   ```bash
+   cd jupyterlab-dal-extension
+   npm install
+   npm run build
+   jupyter labextension install .
+   jupyter lab
+   ```
+
+3. **Open the DAL panel in JupyterLab:**
+   - Use the command palette: `Ctrl+Shift+C` → "Open DAL Panel"
+   - Or use the DAL menu item
+
+4. **Test the modern API:**
+   ```bash
+   python test_modern_api_workflow.py
+   ```
+
+### **Key Improvements:**
+
+- **Clean Architecture**: No legacy compatibility layer - pure microservices API
+- **Better Performance**: Direct communication with optimized endpoints
+- **Enhanced Features**: Access to full experiment lifecycle management
+- **Future-Proof**: Built on modern, extensible API design
+- **Type Safety**: Improved TypeScript integration with clear API contracts
+
+### **API Client Architecture:**
+
+The extension now uses a modern `DALAPIClient` class that:
+- Manages experiment state automatically
+- Provides type-safe API calls
+- Handles error cases gracefully
+- Supports the full microservices feature set
+- Maintains clean separation of concerns
+
+## 🧩 Extending the System
+
+### Adding New AL Frameworks
+
+1. Create a new plugin in `al-engine/plugins/frameworks/`
+2. Implement the `ALFrameworkPlugin` interface
+3. Register the plugin in the registry
+
+### Adding New Models
+
+1. Create a new plugin in `al-engine/plugins/models/`
+2. Implement the `ModelPlugin` interface
+3. Add configuration support
+
+### Adding New Query Strategies
+
+1. Create a new plugin in `al-engine/plugins/strategies/`
+2. Implement the `QueryStrategyPlugin` interface
+3. Define strategy parameters
+
+## 🔍 Monitoring and Debugging
+
+### Health Checks
 ```bash
-git checkout -b feature/your-feature
+# System overview
+curl http://localhost:8000/system/status
+
+# Individual services
+curl http://localhost:8001/health  # AL Engine
+curl http://localhost:8002/health  # Blockchain
+curl http://localhost:8000/health  # Orchestrator
 ```
 
-2. Implement your changes
-3. Add tests
-4. Submit a pull request
+### Logs
+Each service provides detailed logging for debugging and monitoring.
 
-### Running Tests
-
-```bash
-# Backend tests
-pytest DAL/backend/tests/
-
-# Frontend tests
-cd DAL/frontend
-npm test
-```
-
-## 📚 Documentation
-
-- API Documentation: http://localhost:8000/docs
-- Frontend Documentation: http://localhost:3000/docs
-- Example Notebooks: `/notebooks`
+### Metrics
+- Model performance metrics
+- System resource usage
+- Request/response times
+- Error rates
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Open a pull request
+2. Create a feature branch
+3. Implement your changes
+4. Add tests
+5. Submit a pull request
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+[Add your license information here]
 
-## 👥 Authors
+## 🆘 Support
 
-- Your Name - Initial work - [GitHub](https://github.com/yourusername)
+For issues and questions:
+1. Check the API documentation
+2. Review the logs
+3. Run the test workflow
+4. Create an issue on GitHub
 
-## 🙏 Acknowledgments
+---
 
-- modAL team for the active learning library
-- FastAPI team for the amazing framework
-- React and Material-UI teams
+**Built with ❤️ for the Active Learning community**

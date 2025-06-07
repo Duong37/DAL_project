@@ -1,0 +1,33 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="16"
+  height="16"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  class="lucide lucide-brain-circuit"
+>
+  <path
+    d="M12 5a3 3 0 1 0-5.997.142A3 3 0 0 0 6 11H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h2"
+  />
+  <path
+    d="M12 5a3 3 0 1 1 5.997.142A3 3 0 0 1 18 11h2a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-2"
+  />
+  <path
+    d="M6 11a3 3 0 1 0-5.997-.142A3 3 0 0 0 0 5h2a1 1 0 0 1 1 1v3"
+  />
+  <path
+    d="M18 11a3 3 0 1 1 5.997-.142A3 3 0 0 1 24 5h-2a1 1 0 0 0-1 1v3"
+  />
+  <path
+    d="M12 11a3 3 0 1 0-5.997.142A3 3 0 0 0 6 17H4a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h2"
+  />
+  <path
+    d="M12 11a3 3 0 1 1 5.997.142A3 3 0 0 1 18 17h2a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-2"
+  />
+  <path d="M12 17a3 3 0 1 0-5.997.142A3 3 0 0 0 6 23h2a1 1 0 0 0 1-1v-3" />
+  <path d="M12 17a3 3 0 1 1 5.997.142A3 3 0 0 1 18 23h2a1 1 0 0 1 1-1v-3" />
+</svg> 
